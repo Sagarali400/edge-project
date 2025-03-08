@@ -8,10 +8,10 @@ const GameLevel = () => {
       <button  onClick={() => navigate("/easy")} className="btn btn-outline btn-secondary text-2xl px-10 py-7 w-64">
         Easy
       </button>
-      <button className="btn btn-accent text-2xl px-10 py-7 btn-outline w-64">
+      <button  onClick={() => navigate("/medium")} className="btn btn-outline btn-secondary text-2xl px-10 py-7 w-64">
         Medium
       </button>
-      <button className="btn btn-info text-2xl px-10 py-7 btn-outline w-64">
+      <button onClick={() => navigate("/hard")} className="btn btn-info text-2xl px-10 py-7 btn-outline w-64">
         Hard
       </button>
     </div>

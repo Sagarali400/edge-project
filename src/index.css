@@ -4,8 +4,17 @@
 
 body {
   margin: 0;
-  
+ 
   min-width: 320px;
   min-height: 100vh;
 }
+/* Example dark mode styles */
+.dark {
+  background-color: blanchedalmond;
+  color: blue;
+}
+.aquamarine{
+  background-color: aquamarine;
+}
+
 

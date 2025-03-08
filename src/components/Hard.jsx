@@ -1,72 +1,69 @@
 import { useState, useEffect } from "react";
 
-const EasyMode = () => {
-    const words = [
-        "bat", "cat", "dog", "egg", "fox", "hat", "jet", "man", "pen", 
-        "rat", "sun", "tap", "top", "sit", "pat", "log", "bun", "lip", "pig", 
-        "mat", "nut", "pan", "fan", "pin", "kit", "dot", "cup", "pot", "box", 
-        "fig", "sit", "cap", "bed", "cot", "pet", "wet", "pit", "tot", "zip", 
-        "rip", "jug", "ram", "rod", "bun", "bud", "bag", "bid", "dig", "wig", 
-        "pup", "bus", "mop", "hop", "fan", "fan", "pit", "dot", "gun", "but", 
-        "ran", "tan", "mat", "cot", "fit", "web", "got", "hat", "pan", "sit", 
-        "cut", "dot", "run", "sip", "cup", "zip", "bet", "dip", "tan", "box", 
-        "run", "bat", "log", "nut", "pan", "pin", "dog", "jet", "kit", "rip"
-      ];
-      
+const Hard = () => {
+  const words = [
+    "apple", "table", "chair", "smile", "plane", "liver", "water", "sweet", "straw", "grape",
+    "lemon", "stone", "bread", "piano", "train", "apple", "peach", "tiger", "vowel", "flame",
+    "shoes", "black", "color", "drake", "party", "drink", "light", "music", "money", "march",
+    "stone", "plant", "heart", "pride", "glove", "quick", "grape", "sweet", "youth", "peace",
+    "river", "brave", "chose", "click", "spark", "climb", "sight", "moist", "crisp", "clean",
+    "bake", "pink", "fire", "leaf", "chip", "jump", "ship", "mint", "roll", "cold",
+    "bend", "lace", "walk", "cook", "play", "talk", "show", "hurt", "mark", "code",
+    "flip", "push", "trip", "turn", "slip", "pull", "kick", "grab", "skip", "beat",
+    "wood", "bone", "task", "mind", "tone", "pace", "rate", "coat", "bath", "turn",
+    "hope", "meal", "port", "shop", "lake", "star", "note", "game", "push", "fire",
+    "fire", "rock", "roll", "blue", "rain", "goal", "land", "wave", "buzz", "trip"
+  ];
 
   const [randomWord, setRandomWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [totalAttempts, setTotalAttempts] = useState(0);
-  const [answerHistory, setAnswerHistory] = useState([]);
+  const [bestScore, setBestScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [topScores, setTopScores] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30); // Timer starts at 30 seconds
+  const [answerHistory, setAnswerHistory] = useState([]);
   const totalQuestions = 10;
 
   const scrambleWord = (word) => {
     if (word.length <= 2) return word;
-    if (word.length === 3) {
-      return word[2] + word[1] + word[0]; 
-    }
+    let swappedFirstTwo = word[1] + word[0] + word.slice(2, -2) + word.slice(-2);
+    let swappedLastTwo = swappedFirstTwo.slice(0, -2) + swappedFirstTwo.slice(-1) + swappedFirstTwo.slice(-2, -1);
+    return swappedLastTwo[swappedLastTwo.length - 1] + swappedLastTwo.slice(1, -1) + swappedLastTwo[0];
   };
 
   const recordAttempt = () => {
     if (randomWord) {
       const isCorrect = userInput.trim().toLowerCase() === randomWord.toLowerCase();
       setAnswerHistory(prevHistory => [
-        ...prevHistory, 
-        { attempt: totalAttempts + 1, given: userInput || "No input", correct: randomWord, isCorrect }
+        ...prevHistory,
+        { attempt: totalAttempts + 1, given: userInput, correct: randomWord, isCorrect }
       ]);
-
       if (isCorrect) {
         setCorrectAnswers(prev => prev + 1);
       }
     }
   };
-  
+
   const getRandomWord = () => {
     if (totalAttempts < totalQuestions) {
       recordAttempt();
       setTotalAttempts(prev => prev + 1);
-
       const randomIndex = Math.floor(Math.random() * words.length);
       setRandomWord(words[randomIndex]);
       setUserInput('');
-      setTimeLeft(30); // Reset timer for the new word
+      setTimeLeft(30);
     }
   };
 
   useEffect(() => {
-    // Call getRandomWord only after the first render (after mounting)
     const timeoutId = setTimeout(() => {
       getRandomWord();
     }, 0);
-
-    // Cleanup timeout when component is unmounted
     return () => clearTimeout(timeoutId);
   }, []);
 
-  // Timer effect
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setInterval(() => {
@@ -74,9 +71,24 @@ const EasyMode = () => {
       }, 1000);
       return () => clearInterval(timer);
     } else {
-      getRandomWord(); // Automatically go to the next word when time runs out
+      getRandomWord();
     }
   }, [timeLeft]);
+
+  useEffect(() => {
+    if (totalAttempts === totalQuestions) {
+      if (correctAnswers > bestScore) {
+        setBestScore(correctAnswers);
+      }
+      
+      const updatedTopScores = [...topScores, correctAnswers]
+        .sort((a, b) => b - a)
+        .slice(0, 5);
+      setTopScores(updatedTopScores);
+    }
+  }, [totalAttempts, correctAnswers]);
+
+  const timeClass = timeLeft <= 5 ? "text-red-600 font-bold" : "text-black";
 
   if (totalAttempts >= totalQuestions) {
     return (
@@ -122,7 +134,7 @@ const EasyMode = () => {
       <div className="grid grid-cols-3">
         <p></p>
         <h2 className="text-3xl font-thin">Guess the correct Word</h2>
-        <p>Answers: {totalAttempts}/{totalQuestions} <br />Time Left: {timeLeft}s</p>
+        <p>Answers: {totalAttempts}/{totalQuestions} <br />Time Left: <span className={timeClass}>{timeLeft}s</span></p>
       </div>
       <h1 className="text-3xl font-bold">{scrambleWord(randomWord)}</h1>
 
@@ -141,11 +153,8 @@ const EasyMode = () => {
       </fieldset>
 
       <button className="btn btn-outline btn-success" onClick={getRandomWord}>Next Word</button>
-      <script>
-        
-      </script>
     </div>
   );
 };
 
-export default EasyMode;
+export default Hard;

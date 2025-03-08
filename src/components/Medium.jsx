@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 
-const EasyMode = () => {
-    const words = [
-        "bat", "cat", "dog", "egg", "fox", "hat", "jet", "man", "pen", 
-        "rat", "sun", "tap", "top", "sit", "pat", "log", "bun", "lip", "pig", 
-        "mat", "nut", "pan", "fan", "pin", "kit", "dot", "cup", "pot", "box", 
-        "fig", "sit", "cap", "bed", "cot", "pet", "wet", "pit", "tot", "zip", 
-        "rip", "jug", "ram", "rod", "bun", "bud", "bag", "bid", "dig", "wig", 
-        "pup", "bus", "mop", "hop", "fan", "fan", "pit", "dot", "gun", "but", 
-        "ran", "tan", "mat", "cot", "fit", "web", "got", "hat", "pan", "sit", 
-        "cut", "dot", "run", "sip", "cup", "zip", "bet", "dip", "tan", "box", 
-        "run", "bat", "log", "nut", "pan", "pin", "dog", "jet", "kit", "rip"
-      ];
-      
+const Medium = () => {
+  const words = [
+    "word", "lamp", "step", "card", "bake", "mile", "sing", "tank", "jump", "fold", 
+    "mint", "trap", "grid", "gold", "rest", "coin", "help", "grow", "sick", "rake", 
+    "stop", "trip", "pale", "bore", "stone", "quiz", "boot", "flip", "test", "snug", 
+    "roll", "more", "leaf", "bite", "love", "tear", "core", "fool", "bash", "trap", 
+    "head", "nest", "cast", "fire", "rule", "loop", "maze", "bore", "hop", "tuck", 
+    "sure", "pace", "life", "mark", "done", "dash", "wake", "high", "slow", "care", 
+    "lead", "bark", "fair", "race", "turn", "belt", "blow", "fork", "bake", "blow", 
+    "send", "view", "talk", "pump", "band", "rock", "show", "mine", "take", "code", 
+    "lock", "bend", "book", "jump", "blue", "cake", "fine", "mark", "flip", "bake", 
+    "flip", "skip", "thin", "chip", "tip", "net", "bat", "pen", "ram", "fan", 
+  ];
 
   const [randomWord, setRandomWord] = useState('');
   const [userInput, setUserInput] = useState('');
@@ -23,11 +23,18 @@ const EasyMode = () => {
   const [timeLeft, setTimeLeft] = useState(30); // Timer starts at 30 seconds
   const totalQuestions = 10;
 
+  // Scramble word function
   const scrambleWord = (word) => {
-    if (word.length <= 2) return word;
-    if (word.length === 3) {
-      return word[2] + word[1] + word[0]; 
-    }
+    if (word.length <= 2) return word; // If the word is too short, no swap
+
+    // Step 1: Swap the first two letters
+    let swappedFirstTwo = word[1] + word[0] + word.slice(2, -2) + word.slice(-2);
+
+    // Step 2: Swap the last two letters
+    let swappedLastTwo = swappedFirstTwo.slice(0, -2) + swappedFirstTwo.slice(-1) + swappedFirstTwo.slice(-2, -1);
+
+    // Step 3: Swap the first and last letters
+    return swappedLastTwo[swappedLastTwo.length - 1] + swappedLastTwo.slice(1, -1) + swappedLastTwo[0];
   };
 
   const recordAttempt = () => {
@@ -141,11 +148,8 @@ const EasyMode = () => {
       </fieldset>
 
       <button className="btn btn-outline btn-success" onClick={getRandomWord}>Next Word</button>
-      <script>
-        
-      </script>
     </div>
   );
 };
 
-export default EasyMode;
+export default Medium;
